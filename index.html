@@ -339,8 +339,10 @@ if(CONFIG.WHATSAPP)$("#wa").hidden=false;
 function check(){if(!$("#ms").value.trim()){$("#ms").focus();toast("Please write a message");return false}return true}
 $("#cf").addEventListener("submit",e=>{e.preventDefault();if(!check())return;
   if(!CONFIG.CONTACT_EMAIL){toast("Email is not set up yet");return}
-  location.href=`mailto:${CONFIG.CONTACT_EMAIL}?subject=${encodeURIComponent("[Teudot] "+$("#tp").value)}&body=${encodeURIComponent(mailBody())}`;toast("Opening your email app")});
-$("#wa").onclick=()=>{if(check())open(`https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(mailBody())}`,"_blank")};
+    {const su=encodeURIComponent("[Teudot] "+$("#tp").value),bd=encodeURIComponent(mailBody());
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent))location.href=`mailto:${CONFIG.CONTACT_EMAIL}?subject=${su}&body=${bd}`;
+  else open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.CONTACT_EMAIL)}&su=${su}&body=${bd}`,"_blank");}
+  toast("Opening your email app")});
 
 /* ---------- load ---------- */
 function stamp(){$("#upd").textContent=new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
