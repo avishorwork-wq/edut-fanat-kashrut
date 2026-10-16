@@ -337,12 +337,18 @@ $("#rpt").onclick=()=>{const c=VIEW[cur];$("#dlg").close();$("#tp").value="Repor
 function mailBody(){const f=new FormData($("#cf"));return[`Topic: ${f.get("topic")}`,`Business: ${f.get("biz")||"-"}`,`Name: ${f.get("name")||"-"}`,`Contact: ${f.get("email")||"-"}`,"",f.get("msg")].join("\n")}
 if(CONFIG.WHATSAPP)$("#wa").hidden=false;
 function check(){if(!$("#ms").value.trim()){$("#ms").focus();toast("Please write a message");return false}return true}
+const isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
 $("#cf").addEventListener("submit",e=>{e.preventDefault();if(!check())return;
   if(!CONFIG.CONTACT_EMAIL){toast("Email is not set up yet");return}
-    {const su=encodeURIComponent("[Teudot] "+$("#tp").value),bd=encodeURIComponent(mailBody());
-  if(/Android|iPhone|iPad/i.test(navigator.userAgent))location.href=`mailto:${CONFIG.CONTACT_EMAIL}?subject=${su}&body=${bd}`;
-  else open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.CONTACT_EMAIL)}&su=${su}&body=${bd}`,"_blank");}
+  const su=encodeURIComponent("[Teudot] "+$("#tp").value),bd=encodeURIComponent(mailBody()),to=encodeURIComponent(CONFIG.CONTACT_EMAIL);
+  if(isMobile)location.href=`mailto:${CONFIG.CONTACT_EMAIL}?subject=${su}&body=${bd}`;
+  else open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${su}&body=${bd}`,"_blank");
   toast("Opening your email app")});
+$("#wa").onclick=()=>{if(!check())return;
+  const t=encodeURIComponent(mailBody()),n=CONFIG.WHATSAPP;
+  if(isMobile)location.href=`https://api.whatsapp.com/send?phone=${n}&text=${t}`;
+  else open(`https://web.whatsapp.com/send?phone=${n}&text=${t}`,"_blank");
+  toast("Opening WhatsApp")};
 
 /* ---------- load ---------- */
 function stamp(){$("#upd").textContent=new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
